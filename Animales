@@ -1,0 +1,114 @@
+/*
+Nombre: Delgado Cerros Rodrigo Daniel
+Grupo: 4IM8
+Práctica 1 U2
+
+Creación de tablas e inserción de registros.
+*/
+
+create database mascotas;
+use mascotas;
+
+# Creación de tablas
+create table animales
+(
+	idMascota int primary key,
+	nomMas varchar(20),
+    tipoMas varchar(20),
+    razaMas varchar(20),
+    pesoMas numeric(4,1),
+    sexoMas varchar(20),
+    nomDueno varchar(50),
+    colorMas varchar(20),
+    costo numeric(4,1)
+);
+
+create table vacunas
+(
+	idVacuna int primary key,
+    idMascota int,
+    fechaVac varchar(20),
+    descripcion varchar(20),
+    veterinario varchar(20),
+		foreign key (idMascota) references animales(idMascota)
+);
+
+# Inserción de registros
+insert into animales values
+(1, "Poncho", "Perro", "Chihuahua", 2, "Macho", "Diego", "Blanco con gris", 300),
+(2, "Lulú", "Perro", "Boyero", 43, "Hembra", "Pedro", "Negro con naranja", 800),
+(3, "Tofu", "Perro", "San Bernardo", 75, "Macho", "Gabriela", "Café", 980),
+(4, "Copito", "Gato", "Siamés", 4.5, "Macho", "Diego", "Café con negro", 560),
+(5, "Bella", "Gato", "Egipcio", 4.2, "Hembra", "Vanessa", "Rosa claro",230),
+(6, "Gizmo", "Gato", "Naranja", 6.8, "Macho", "Luis", "Atigrado", 350),
+(7, "Bimba", "Gato", "Ragamuffin", 5, "Hembra", "Ricardo", "Blanco", 340),
+(8, "Cielo", "Ave", "Cacatúa", 0.8, "Hembra", "Ximena", "Blanco", 570),
+(9, "Kiwi", "Ave", "Perico", 0.2, "Macho", "Marco", "Verde", 780),
+(10, "Canela", "Ave", "Loro africano", 0.6, "Hembra", "Lesly", "Gris oscuro", 368);
+
+insert into vacunas values
+(1, 1, "21/03/25", "Moquillo", "Dr. López"),
+(2, 2, "22/03/25", "Hepatitis canina", "Dr. López"),
+(3, 3, "22/03/25", "Rabia", "Dr. López"),
+(4, 4, "28/03/25", "Rabia", "Dr. Sánchez"),
+(5, 5, "20/03/25", "Moquillo", "Dr. López"),
+(6, 6, "20/03/25", "Leucemia felina", "Dr. Hernández"),
+(7, 7, "18/02/25", "Leucemia felina", "Dr. López"),
+(8, 8, "18/02/25", "Viruela aviar", "Dr. García"),
+(9, 9, "14/02/25", "Leishmaniosis", "Dr. Hernández"),
+(10, 10, "15/03/25", "Bronquitis", "Dr. García");
+
+/*
+Nombre: Delgado Cerros Rodrigo Daniel
+Grupo: 4IM8
+Práctica 1 U2
+
+Consultas.
+*/
+
+# 3. Muestra a los animales de tipo "Perro" con where
+select * from animales where tipoMas="Perro";
+
+# 4. Muestra el peso del animal más pesado con el máximo de costo
+select max(pesoMas) from animales;
+
+# 5. Muestra el costo del animal más barato con el mínimo de costo
+select min(costo) from animales;
+
+# 6. Precio promedio de las mascotas tipo gato, con avg() y seleccionando el tipo de mascota con where
+select avg(costo) from animales where tipoMas="Gato";
+
+# 7. Cuenta las mascotas, las agrupa por tipoMas y cuenta cuántas mascotas hay por tipo; luego, con el having, solo muestra los registros donde tipoMas="Ave"
+select count(*) as numMascotas, tipoMas from animales group by tipoMas having tipoMas="Ave";
+
+# 8. Similar al anterior, cuenta las mascotas, las agrupa por tipoMas y cuenta cuántas mascotas hay por tipo (sin having para que salgan todos los tipos)
+select count(*) as numMascotas, tipoMas from animales group by tipoMas;
+
+# 9. Selecciona el valor máximo de pesoMas, agrupando a los animales por su tipo
+select max(pesoMas), tipoMas from animales group by tipoMas;
+
+# 10. Agrupando los animales por tipoMas, calcula el promedio del costo de cada uno con avg()
+select avg(costo) as costoPromedio, tipoMas from animales group by tipoMas;
+
+/*
+  11. Muestra los atributos requeridos (nombre de la mascota, nombre del dueño, nombre de la vacuna y fecha de vacunación)
+  accediendo a los atributos de vacunas a través de un inner join con el id de la mascota en ambas tablas.
+*/
+select nomMas as nombreMascota, nomDueno, descripcion as nombreVacuna, fechaVac from animales
+inner join vacunas on animales.idMascota = vacunas.idMascota;
+
+# Los siguientes 2 puntos tienen el mismo resultado, puesto que no repetí los nombres de los dueños más que uno de ellos.
+
+# 12. Cuenta a las mascotas por su id, luego las agrupa por el nombre del dueño.
+select count(idMascota) as numMascotas, nomDueno from animales group by nomDueno;
+# 13. Cuenta a las mascotas por su tipo, luego las agrupa por el nombre del dueño.
+select count(tipoMas) as numMascotas, nomDueno from animales group by nomDueno;
+
+# 14. Cuenta el número de mascotas vacunadas y las agrupa por su id
+select count(idMascota) as numMascotas, idMascota from vacunas group by idMascota;
+
+# 15. Cuenta el número de mascotas en la tabla vacunas, y las agrupa por veterinario
+select count(idMascota) as numMascotas, veterinario from vacunas group by veterinario;
+
+# 16. Cuenta el número de mascotas y las agrupa por la descripción (o nombre) de la mascota
+select count(idMascota) as numMascotas, descripcion from vacunas group by descripcion;
